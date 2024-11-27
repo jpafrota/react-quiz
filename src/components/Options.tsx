@@ -1,4 +1,4 @@
-import { AppActions, QuestionType } from '../App';
+import { AppActions, QuestionType } from "../types/types";
 
 type IOptionsProps = {
   question: QuestionType;
@@ -13,6 +13,7 @@ function Options({ question, dispatch, answer }: IOptionsProps) {
     <div className='options'>
       {question.options.map((e, index) => (
         <button
+          key={e + index}
           className={`btn btn-option ${index === answer ? 'answer' : ''} ${
             hasUserAnswered
               ? index === question.correctOption

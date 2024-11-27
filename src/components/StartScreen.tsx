@@ -1,4 +1,4 @@
-import { AppActions } from '../App';
+import { AppActions } from "../types/types";
 
 type IStartScreenProps = {
   numQuestions: number;

@@ -7,6 +7,8 @@ import NextButton from "./components/NextButton";
 import Question from "./components/Question";
 import StartScreen from "./components/StartScreen";
 import { AppActions, QuizState } from "./types/types";
+import ProgressBar from "./components/ProgressBar";
+import FinishScreen from "./components/FinishScreen";
 
 // =========> use case study <===========
 // type Increment = { type: 'increment'; payload: number };
@@ -21,6 +23,7 @@ const initialState: QuizState = {
   index: 0,
   answer: null,
   points: 0,
+  highScore: 0,
 };
 
 const reducer = (state: QuizState, action: AppActions): QuizState => {
@@ -29,7 +32,7 @@ const reducer = (state: QuizState, action: AppActions): QuizState => {
   switch (action.type) {
     case "dataReceived":
       return {
-        ...state,
+        ...initialState,
         questions: action.payload,
         status: "ready",
       };
@@ -48,8 +51,20 @@ const reducer = (state: QuizState, action: AppActions): QuizState => {
             ? state.points + question.points
             : state.points,
       };
+    case "finish":
+      return {
+        ...state,
+        status: "finished",
+        highScore:
+          state.points > state.highScore ? state.points : state.highScore,
+      };
     case "reset":
-      return initialState;
+      return {
+        ...initialState,
+        highScore: state.highScore,
+        status: "ready",
+        questions: state.questions,
+      };
     default:
       throw new Error("Unkown action type.");
   }
@@ -58,7 +73,7 @@ const reducer = (state: QuizState, action: AppActions): QuizState => {
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { questions, status, index, answer } = state;
+  const { questions, status, index, answer, points, highScore } = state;
 
   useEffect(() => {
     fetch("http://localhost:8000/questions")
@@ -70,6 +85,10 @@ function App() {
   }, []);
 
   const numQuestions = questions.length;
+  const maxPoints = questions.reduce(
+    (total, question) => total + question.points,
+    0
+  );
 
   return (
     <div className="app">
@@ -80,14 +99,34 @@ function App() {
         {status === "ready" && (
           <StartScreen numQuestions={numQuestions} dispatch={dispatch} />
         )}
+        {status === "finished" && (
+          <FinishScreen
+            maxPoints={maxPoints}
+            points={points}
+            highScore={highScore}
+            dispatch={dispatch}
+          />
+        )}
         {status === "active" && (
           <>
+            <ProgressBar
+              index={index}
+              numQuestions={numQuestions}
+              points={points}
+              maxPoints={maxPoints}
+              answer={answer}
+            />
             <Question
               question={questions[index]}
               dispatch={dispatch}
               answer={answer}
             />
-            <NextButton dispatch={dispatch} answer={answer} />
+            <NextButton
+              dispatch={dispatch}
+              answer={answer}
+              index={index}
+              numQuestions={numQuestions}
+            />
           </>
         )}
       </Main>

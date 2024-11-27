@@ -1,4 +1,4 @@
-import { AppActions, QuestionType } from '../App';
+import { AppActions, QuestionType } from '../types/types';
 import Options from './Options';
 
 type IQuestionProps = {
