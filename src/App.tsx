@@ -58,7 +58,7 @@ const reducer = (state: QuizState, action: AppActions): QuizState => {
         highScore:
           state.points > state.highScore ? state.points : state.highScore,
       };
-    case "reset":
+    case "restart":
       return {
         ...initialState,
         highScore: state.highScore,

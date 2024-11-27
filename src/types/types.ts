@@ -28,8 +28,8 @@ export type DataFailed = {
   type: "dataFailed";
 };
 
-export type Reset = {
-  type: "reset";
+export type Restart = {
+  type: "restart";
 };
 
 export type StartGame = {
@@ -54,6 +54,6 @@ export type AppActions =
   | DataFailed
   | StartGame
   | FinishGame
-  | Reset
+  | Restart
   | NextQuestion
   | UpdateAnswer;
