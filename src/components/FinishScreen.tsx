@@ -25,7 +25,7 @@ function FinishScreen({
   return (
     <>
       <p className="result">
-        You scored{" "}
+        {emoji} You scored{" "}
         <strong>
           {points} out of {maxPoints} ({Math.ceil(percentage)}%)
         </strong>

@@ -15,7 +15,7 @@ import FinishScreen from "./components/FinishScreen";
 // type Random = { type: 'random' };
 
 // type AppActions = Increment | Random;
-// ----------------------------------------
+// --------------------------------------
 
 const initialState: QuizState = {
   questions: [],
