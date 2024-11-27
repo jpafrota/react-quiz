@@ -1,11 +1,12 @@
-import { useEffect, useReducer } from 'react';
-import Header from './components/Header';
-import Main from './components/Main';
-import Loader from './components/Loader';
-import ErrorMessage from './components/Error';
-import StartScreen from './components/StartScreen';
-import Question from './components/Question';
-import NextButton from './components/NextButton';
+import { useEffect, useReducer } from "react";
+import ErrorMessage from "./components/Error";
+import Header from "./components/Header";
+import Loader from "./components/Loader";
+import Main from "./components/Main";
+import NextButton from "./components/NextButton";
+import Question from "./components/Question";
+import StartScreen from "./components/StartScreen";
+import { AppActions, QuizState } from "./types/types";
 
 // =========> use case study <===========
 // type Increment = { type: 'increment'; payload: number };
@@ -14,84 +15,31 @@ import NextButton from './components/NextButton';
 // type AppActions = Increment | Random;
 // ----------------------------------------
 
-// =====> Types
-type Statuses = 'loading' | 'error' | 'ready' | 'active' | 'finished';
-
-type Questions = QuestionType[];
-
-export type QuestionType = {
-  question: string;
-  options: Array<string>;
-  correctOption: number;
-  points: number;
-};
-
-type QuizState = {
-  questions: Questions;
-  status: Statuses;
-  index: number;
-  answer: number | null;
-  points: number;
-};
-
-type DataReceived = {
-  type: 'dataReceived';
-  payload: Questions;
-};
-
-type DataFailed = {
-  type: 'dataFailed';
-};
-
-type Reset = {
-  type: 'reset';
-};
-
-type StartGame = {
-  type: 'startGame';
-};
-
-type UpdateAnswer = {
-  type: 'newAnswer';
-  payload: number;
-};
-
-type NextQuestion = {
-  type: 'nextQuestion';
-};
-
-export type AppActions =
-  | DataReceived
-  | DataFailed
-  | StartGame
-  | Reset
-  | NextQuestion
-  | UpdateAnswer;
-
 const initialState: QuizState = {
   questions: [],
-  status: 'loading',
+  status: "loading",
   index: 0,
   answer: null,
   points: 0,
 };
 
 const reducer = (state: QuizState, action: AppActions): QuizState => {
+  const question = state.questions.at(state.index);
+
   switch (action.type) {
-    case 'dataReceived':
+    case "dataReceived":
       return {
         ...state,
         questions: action.payload,
-        status: 'ready',
+        status: "ready",
       };
-    case 'dataFailed':
-      return { ...state, status: 'error' };
-    case 'startGame':
-      return { ...state, status: 'active' };
-    case 'nextQuestion':
+    case "dataFailed":
+      return { ...state, status: "error" };
+    case "startGame":
+      return { ...state, status: "active" };
+    case "nextQuestion":
       return { ...state, index: state.index + 1, answer: null };
-    case 'newAnswer':
-      const question = state.questions.at(state.index);
+    case "newAnswer":
       return {
         ...state,
         answer: action.payload,
@@ -100,10 +48,10 @@ const reducer = (state: QuizState, action: AppActions): QuizState => {
             ? state.points + question.points
             : state.points,
       };
-    case 'reset':
+    case "reset":
       return initialState;
     default:
-      throw new Error('Unkown action type.');
+      throw new Error("Unkown action type.");
   }
 };
 
@@ -113,26 +61,26 @@ function App() {
   const { questions, status, index, answer } = state;
 
   useEffect(() => {
-    fetch('http://localhost:8000/questions')
+    fetch("http://localhost:8000/questions")
       .then((res) => res.json())
       .then((data) =>
-        dispatch({ type: 'dataReceived', payload: data.slice(0, 2) })
+        dispatch({ type: "dataReceived", payload: data.slice(0, 2) })
       )
-      .catch((error) => dispatch({ type: 'dataFailed' }));
+      .catch((error) => dispatch({ type: "dataFailed" }));
   }, []);
 
   const numQuestions = questions.length;
 
   return (
-    <div className='app'>
+    <div className="app">
       <Header />
       <Main>
-        {status === 'loading' && <Loader />}
-        {status === 'error' && <ErrorMessage />}
-        {status === 'ready' && (
+        {status === "loading" && <Loader />}
+        {status === "error" && <ErrorMessage />}
+        {status === "ready" && (
           <StartScreen numQuestions={numQuestions} dispatch={dispatch} />
         )}
-        {status === 'active' && (
+        {status === "active" && (
           <>
             <Question
               question={questions[index]}
