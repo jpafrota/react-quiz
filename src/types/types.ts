@@ -17,6 +17,7 @@ export type QuizState = {
   answer: number | null;
   points: number;
   highScore: number;
+  secondsRemaining: number;
 };
 
 export type DataReceived = {
@@ -49,6 +50,10 @@ export type FinishGame = {
   type: "finish";
 };
 
+export type Tick = {
+  type: "tick",
+}
+
 export type AppActions =
   | DataReceived
   | DataFailed
@@ -56,4 +61,5 @@ export type AppActions =
   | FinishGame
   | Restart
   | NextQuestion
+  | Tick
   | UpdateAnswer;

@@ -9,6 +9,8 @@ import StartScreen from "./components/StartScreen";
 import { AppActions, QuizState } from "./types/types";
 import ProgressBar from "./components/ProgressBar";
 import FinishScreen from "./components/FinishScreen";
+import Footer from "./components/Footer";
+import Timer from "./components/Timer";
 
 // =========> use case study <===========
 // type Increment = { type: 'increment'; payload: number };
@@ -24,6 +26,7 @@ const initialState: QuizState = {
   answer: null,
   points: 0,
   highScore: 0,
+  secondsRemaining: 360,
 };
 
 const reducer = (state: QuizState, action: AppActions): QuizState => {
@@ -62,8 +65,14 @@ const reducer = (state: QuizState, action: AppActions): QuizState => {
       return {
         ...initialState,
         highScore: state.highScore,
-        status: "ready",
+        status: "active",
         questions: state.questions,
+      };
+    case "tick":
+      return {
+        ...state,
+        secondsRemaining: state.secondsRemaining - 1,
+        status: state.secondsRemaining === 0 ? "finished" : state.status,
       };
     default:
       throw new Error("Unkown action type.");
@@ -73,7 +82,15 @@ const reducer = (state: QuizState, action: AppActions): QuizState => {
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { questions, status, index, answer, points, highScore } = state;
+  const {
+    questions,
+    status,
+    index,
+    answer,
+    points,
+    highScore,
+    secondsRemaining,
+  } = state;
 
   useEffect(() => {
     fetch("http://localhost:8000/questions")
@@ -121,12 +138,15 @@ function App() {
               dispatch={dispatch}
               answer={answer}
             />
-            <NextButton
-              dispatch={dispatch}
-              answer={answer}
-              index={index}
-              numQuestions={numQuestions}
-            />
+            <Footer>
+              <Timer secondsRemaining={secondsRemaining} dispatch={dispatch} />
+              <NextButton
+                dispatch={dispatch}
+                answer={answer}
+                index={index}
+                numQuestions={numQuestions}
+              />
+            </Footer>
           </>
         )}
       </Main>
