@@ -26,7 +26,6 @@ const initialState: QuizState = {
   answer: null,
   points: 0,
   highScore: 0,
-  secondsRemaining: 360,
 };
 
 const reducer = (state: QuizState, action: AppActions): QuizState => {
@@ -68,12 +67,6 @@ const reducer = (state: QuizState, action: AppActions): QuizState => {
         status: "active",
         questions: state.questions,
       };
-    case "tick":
-      return {
-        ...state,
-        secondsRemaining: state.secondsRemaining - 1,
-        status: state.secondsRemaining === 0 ? "finished" : state.status,
-      };
     default:
       throw new Error("Unkown action type.");
   }
@@ -82,6 +75,8 @@ const reducer = (state: QuizState, action: AppActions): QuizState => {
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  console.log('render');
+
   const {
     questions,
     status,
@@ -89,7 +84,6 @@ function App() {
     answer,
     points,
     highScore,
-    secondsRemaining,
   } = state;
 
   useEffect(() => {
@@ -139,7 +133,7 @@ function App() {
               answer={answer}
             />
             <Footer>
-              <Timer secondsRemaining={secondsRemaining} dispatch={dispatch} />
+              <Timer dispatch={dispatch} />
               <NextButton
                 dispatch={dispatch}
                 answer={answer}
